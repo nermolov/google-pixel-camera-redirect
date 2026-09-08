@@ -9,14 +9,14 @@ class HostPhotoPagerActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val uri = intent.data
         try {
-            val intent = packageManager.getLaunchIntentForPackage("app.alextran.immich")
-            if (intent != null) {
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-            } else {
-                Log.e(TAG, "Immich app not found")
-            }
+            startActivity(
+                Intent(Intent.ACTION_VIEW)
+                    .setDataAndType(uri, intent.type ?: uri?.let(contentResolver::getType))
+                    .setPackage(IMMICH_PACKAGE)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            )
         } catch (e: Exception) {
             Log.e(TAG, "Error launching Immich app", e)
         } finally {
@@ -26,5 +26,6 @@ class HostPhotoPagerActivity : ComponentActivity() {
 
     companion object {
         private const val TAG = "HostPhotoPagerActivity"
+        private const val IMMICH_PACKAGE = "app.alextran.immich"
     }
 }
