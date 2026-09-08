@@ -10,18 +10,29 @@ android {
         version = release(36)
     }
 
+    val releaseSigning = System.getenv("KEYSTORE_PATH")?.takeIf(String::isNotEmpty)?.let { path ->
+        signingConfigs.create("release") {
+            val password = System.getenv("KEYSTORE_PASSWORD")
+            storeFile = file(path)
+            storePassword = password
+            keyAlias = "immich-redirect"
+            keyPassword = password
+        }
+    }
+
     defaultConfig {
         applicationId = "com.google.android.apps.photos"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = providers.gradleProperty("versionCode").getOrElse("1").toInt()
+        versionName = providers.gradleProperty("versionName").getOrElse("1.0")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
+            signingConfig = releaseSigning
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
