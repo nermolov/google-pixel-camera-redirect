@@ -1,5 +1,6 @@
 package com.google.android.apps.photos.pager
 
+import android.app.KeyguardManager
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +10,19 @@ class HostPhotoPagerActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val keyguard = getSystemService(KeyguardManager::class.java)
+        if (keyguard.isKeyguardLocked) {
+            keyguard.requestDismissKeyguard(this, object : KeyguardManager.KeyguardDismissCallback() {
+                override fun onDismissSucceeded() = forward()
+                override fun onDismissCancelled() = finish()
+                override fun onDismissError() = finish()
+            })
+        } else {
+            forward()
+        }
+    }
+
+    private fun forward() {
         val uri = intent.data
         try {
             startActivity(

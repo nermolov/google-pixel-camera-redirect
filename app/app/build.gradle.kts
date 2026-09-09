@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
         applicationId = "com.google.android.apps.photos"
-        minSdk = 24
+        minSdk = 27
         targetSdk = 36
         versionCode = providers.gradleProperty("versionCode").getOrElse("1").toInt()
         versionName = providers.gradleProperty("versionName").getOrElse("1.0")
